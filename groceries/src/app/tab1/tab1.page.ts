@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { ToastController } from '@ionic/angular';
 import { AlertController } from '@ionic/angular';
+import { GroceriesDataService } from '.././groceries-data.service';
+import { InputDialogueService } from '.././input-dialogue.service';
 
 @Component({
   selector: 'app-tab1',
@@ -12,34 +14,14 @@ export class Tab1Page {
 
   title = "Grocery List App";
 
-  items = [
-    {
-      name: "Bacon",
-      qty: 2
-    },
-    {
-      name: "Eggs",
-      qty: 3
-    },
-    {
-      name: "Milk",
-      qty: 1
-    },
-    {
-      name: "Potatoes",
-      qty: 6
-    },
-    {
-      name: "Nectarines",
-      qty: 4
-    },
+  constructor(public navCtrl: NavController, public toastController: ToastController, public alertController: AlertController, public dataSvc: GroceriesDataService, public inputSvc: InputDialogueService) {}
 
-  ];
-
-  constructor(public navCtrl: NavController, public toastController: ToastController, public alertController: AlertController) {}
+  loadItems() {
+    return this.dataSvc.getItems();
+  }
 
   async removeItem(item, index) {
-      console.log("Removing Item - ", item, index);
+      console.log("Remove Item - ", item, index);
       const toast = await this.toastController.create({
         message: 'Removing Item - ' + index + " " + item.name,
         duration: 3000,
@@ -47,49 +29,23 @@ export class Tab1Page {
       });
       toast.present();
 
-      this.items.splice(index,1);
+      this.dataSvc.removeItem(index);
+    }
+
+  async editItem(item, index) {
+    console.log("Edit Item - ", item, index);
+    const toast = await this.toastController.create({
+      message: 'Editing Item - ' + index + " " + item.name,
+      duration: 3000,
+      // position: 'bottom',
+    });
+    toast.present();
+    this.inputSvc.showPrompt(item, index);
     }
 
   addItem() {
     console.log("Adding Item");
-    this.showAddItemPrompt();
-  }
-
-  async showAddItemPrompt() {
-    const alert = await this.alertController.create({
-      // cssClass: 'my-custom-class',
-      header: 'Add Item',
-      // subHeader: 'Subtitle',
-      message: 'Please enter item and quantity',
-      inputs: [
-        {
-          name: 'name',
-          placeholder: 'Item'
-        },
-        {
-          name: 'qty',
-          placeholder: 'Quantity'
-        },
-      ],
-      buttons: [
-        {
-          text: 'Cancel',
-          // role: 'cancel',
-          // cssClass: 'secondary',
-          handler: (item) => {
-            console.log('Cancel item entry');
-          }
-        }, {
-          text: 'Save',
-          handler: (item) => {
-            console.log('Save', item);
-            this.items.push(item);
-          }
-        }
-      ]
-    });
-
-    await alert.present();
+    this.inputSvc.showPrompt();
   }
 
 }

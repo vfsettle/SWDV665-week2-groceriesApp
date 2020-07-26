@@ -1,6 +1,15 @@
 // Ionic Variables and Theming. For more info, please see:
 // http://ionicframework.com/docs/theming/
 
+$colors: (
+  primary:   #00BFFF,
+  secondary: #3CB371,
+  accent:    #FF7F50,
+  contrast:  #F5F5F5,
+);
+
+
+
 /** Ionic CSS Variables **/
 :root {
   /** primary **/
